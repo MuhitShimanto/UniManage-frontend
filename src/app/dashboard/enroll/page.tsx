@@ -15,6 +15,33 @@ import { apiClient } from "@/lib/api-client";
 import { getApiErrorMessage } from "@/lib/utils";
 import type { ApiResponse, Enrollment, Section, Semester } from "@/types/api";
 
+function parseScheduleSlot(slot: string): { days: string[]; startMin: number; endMin: number } | null {
+  const match = slot
+    .trim()
+    .toUpperCase()
+    .match(/^([A-Z-]+)\s+(\d{1,2}):(\d{2})\s*-\s*(\d{1,2}):(\d{2})$/);
+  if (!match) return null;
+
+  const days = match[1].split("-").filter(Boolean);
+  const startMin = Number(match[2]) * 60 + Number(match[3]);
+  const endMin = Number(match[4]) * 60 + Number(match[5]);
+  if (Number.isNaN(startMin) || Number.isNaN(endMin) || startMin >= endMin) return null;
+
+  return { days, startMin, endMin };
+}
+
+function hasScheduleClash(slotA: string, slotB: string): boolean {
+  if (slotA.trim().toUpperCase() === slotB.trim().toUpperCase()) return true;
+  const a = parseScheduleSlot(slotA);
+  const b = parseScheduleSlot(slotB);
+  if (!a || !b) return false;
+
+  const sharesDay = a.days.some((d) => b.days.includes(d));
+  if (!sharesDay) return false;
+
+  return a.startMin < b.endMin && b.startMin < a.endMin;
+}
+
 function EnrollClient() {
   const queryClient = useQueryClient();
   const { searchParams, updateParams } = useUrlParams();
@@ -124,6 +151,13 @@ function EnrollClient() {
         <div className="grid gap-5 md:grid-cols-2">
           {filteredSections.map((section) => {
             const isEnrolled = enrolledSectionIds.has(section.id);
+            const clashingEnrollment = myEnrollments.find(
+              (e) =>
+                e.status === "ENROLLED" &&
+                e.section.semesterId === section.semesterId &&
+                e.sectionId !== section.id &&
+                hasScheduleClash(e.section.scheduleSlot, section.scheduleSlot)
+            );
             const isFull = section.enrolledCount >= section.maxCapacity;
             const seatsPercent = Math.min(
               100,
@@ -181,6 +215,7 @@ function EnrollClient() {
                     className="w-full"
                     disabled={
                       isEnrolled ||
+                      Boolean(clashingEnrollment) ||
                       isFull ||
                       !section.semester.registrationOpen ||
                       enrollMutation.isPending
@@ -193,6 +228,8 @@ function EnrollClient() {
                         <Check className="h-4 w-4" />
                         Already Enrolled
                       </>
+                    ) : clashingEnrollment ? (
+                      `Time Clash (${clashingEnrollment.section.course.code})`
                     ) : isFull ? (
                       "Section Full"
                     ) : !section.semester.registrationOpen ? (
