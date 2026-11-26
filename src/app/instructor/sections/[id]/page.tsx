@@ -226,24 +226,59 @@ export default function InstructorSectionDetailPage({
                         </p>
                         <p className="text-xs text-slate-500">{enr.student.studentCode}</p>
                       </div>
-                      <div className="flex flex-wrap items-center gap-2">
-                        <select
-                          value={current.status}
-                          onChange={(e) =>
-                            setAttendanceMap((prev) => ({
-                              ...prev,
-                              [enr.id]: {
-                                ...current,
-                                status: e.target.value as AttendanceStatus,
-                              },
-                            }))
-                          }
-                          className="h-9 rounded-lg border border-slate-200 bg-white px-2.5 text-xs font-medium dark:border-slate-700 dark:bg-slate-950"
+                      <div className="flex flex-wrap items-center gap-2.5">
+                        <div
+                          role="radiogroup"
+                          aria-label={`Attendance status for ${enr.student.user.name}`}
+                          className="inline-flex rounded-lg border border-slate-200 bg-slate-50/80 p-0.5"
                         >
-                          <option value="PRESENT">PRESENT</option>
-                          <option value="LATE">LATE</option>
-                          <option value="ABSENT">ABSENT</option>
-                        </select>
+                          {(
+                            [
+                              {
+                                value: "PRESENT",
+                                label: "Present",
+                                activeClass: "bg-emerald-600 text-white shadow-xs",
+                              },
+                              {
+                                value: "LATE",
+                                label: "Late",
+                                activeClass: "bg-amber-500 text-white shadow-xs",
+                              },
+                              {
+                                value: "ABSENT",
+                                label: "Absent",
+                                activeClass: "bg-rose-600 text-white shadow-xs",
+                              },
+                            ] as const
+                          ).map((opt) => {
+                            const checked = current.status === opt.value;
+                            return (
+                              <label
+                                key={opt.value}
+                                className={`cursor-pointer rounded-md px-2.5 py-1.5 text-xs font-semibold transition-all select-none ${
+                                  checked
+                                    ? opt.activeClass
+                                    : "text-slate-600 hover:text-slate-900"
+                                }`}
+                              >
+                                <input
+                                  type="radio"
+                                  name={`attendance-${enr.id}`}
+                                  value={opt.value}
+                                  checked={checked}
+                                  onChange={() =>
+                                    setAttendanceMap((prev) => ({
+                                      ...prev,
+                                      [enr.id]: { ...current, status: opt.value },
+                                    }))
+                                  }
+                                  className="sr-only"
+                                />
+                                {opt.label}
+                              </label>
+                            );
+                          })}
+                        </div>
                         <Input
                           placeholder="Remarks (optional)"
                           value={current.remarks}
