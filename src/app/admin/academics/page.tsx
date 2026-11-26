@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { ArrowLeft, ArrowRight, CheckCircle2, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, Pencil, Plus, Save, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -48,6 +48,12 @@ export default function AdminAcademicsPage() {
   const [secInstId, setSecInstId] = useState("");
   const [secCode, setSecCode] = useState("B");
   const [secSlot, setSecSlot] = useState("SUN-TUE 14:00-15:30");
+  const [editingSectionId, setEditingSectionId] = useState<string | null>(null);
+  const [editSecInstId, setEditSecInstId] = useState("");
+  const [editSecCode, setEditSecCode] = useState("");
+  const [editSecCap, setEditSecCap] = useState(40);
+  const [editSecSlot, setEditSecSlot] = useState("");
+  const [editSecRoom, setEditSecRoom] = useState("");
 
   const { data: departments = [] } = useQuery({
     queryKey: ["departments"],
@@ -188,6 +194,32 @@ export default function AdminAcademicsPage() {
       queryClient.invalidateQueries({ queryKey: ["sections"] });
     },
     onError: (err) => toast.error(getApiErrorMessage(err, "Failed to create section")),
+  });
+
+  const updateSectionMutation = useMutation({
+    mutationFn: async (sectionId: string) =>
+      apiClient.patch(`/sections/${sectionId}`, {
+        instructorId: editSecInstId,
+        sectionCode: editSecCode,
+        maxCapacity: Number(editSecCap),
+        scheduleSlot: editSecSlot,
+        room: editSecRoom || null,
+      }),
+    onSuccess: () => {
+      toast.success("Section updated");
+      setEditingSectionId(null);
+      queryClient.invalidateQueries({ queryKey: ["sections"] });
+    },
+    onError: (err) => toast.error(getApiErrorMessage(err, "Failed to update section")),
+  });
+
+  const deleteSectionMutation = useMutation({
+    mutationFn: async (sectionId: string) => apiClient.delete(`/sections/${sectionId}`),
+    onSuccess: () => {
+      toast.success("Section deleted");
+      queryClient.invalidateQueries({ queryKey: ["sections"] });
+    },
+    onError: (err) => toast.error(getApiErrorMessage(err, "Failed to delete section")),
   });
 
   async function nextWizardStep() {
@@ -576,17 +608,119 @@ export default function AdminAcademicsPage() {
             <CardHeader>
               <CardTitle>Active Sections ({sections.length})</CardTitle>
             </CardHeader>
-            <CardContent className="divide-y divide-slate-100 dark:divide-slate-800">
-              {sections.map((s) => (
-                <div key={s.id} className="py-2.5 text-sm">
-                  <p className="font-semibold">
-                    {s.course.code} (Sec {s.sectionCode}) — {s.semester.name}
-                  </p>
-                  <p className="text-xs text-slate-500">
-                    {s.instructor.user.name} • {s.scheduleSlot} • {s.enrolledCount}/{s.maxCapacity} seats
-                  </p>
-                </div>
-              ))}
+            <CardContent className="divide-y divide-slate-100">
+              {sections.map((s) => {
+                const isEditing = editingSectionId === s.id;
+                return (
+                  <div key={s.id} className="py-3 text-sm">
+                    {isEditing ? (
+                      <div className="space-y-2.5 rounded-xl border border-indigo-200 bg-indigo-50/40 p-3">
+                        <p className="text-xs font-semibold text-indigo-700">
+                          Editing {s.course.code} — {s.semester.name}
+                        </p>
+                        <select
+                          value={editSecInstId}
+                          onChange={(e) => setEditSecInstId(e.target.value)}
+                          className="h-9 w-full rounded-lg border border-slate-200 bg-white px-2.5 text-xs"
+                        >
+                          {instructors.map((u) =>
+                            u.instructorProfile ? (
+                              <option key={u.id} value={u.instructorProfile.id}>
+                                {u.name} ({u.instructorProfile.employeeCode})
+                              </option>
+                            ) : null
+                          )}
+                        </select>
+                        <div className="grid grid-cols-3 gap-2">
+                          <Input
+                            placeholder="Sec"
+                            value={editSecCode}
+                            onChange={(e) => setEditSecCode(e.target.value)}
+                            className="h-8 text-xs"
+                          />
+                          <Input
+                            type="number"
+                            min={5}
+                            max={300}
+                            placeholder="Capacity"
+                            value={editSecCap}
+                            onChange={(e) => setEditSecCap(Number(e.target.value))}
+                            className="h-8 text-xs"
+                          />
+                          <Input
+                            placeholder="Room"
+                            value={editSecRoom}
+                            onChange={(e) => setEditSecRoom(e.target.value)}
+                            className="h-8 text-xs"
+                          />
+                        </div>
+                        <Input
+                          placeholder="Schedule Slot"
+                          value={editSecSlot}
+                          onChange={(e) => setEditSecSlot(e.target.value)}
+                          className="h-8 text-xs"
+                        />
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            disabled={updateSectionMutation.isPending}
+                            onClick={() => updateSectionMutation.mutate(s.id)}
+                          >
+                            <Save className="h-3.5 w-3.5" />
+                            {updateSectionMutation.isPending ? "Saving..." : "Save"}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setEditingSectionId(null)}
+                          >
+                            <X className="h-3.5 w-3.5" />
+                            Cancel
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-between gap-3">
+                        <div>
+                          <p className="font-semibold">
+                            {s.course.code} (Sec {s.sectionCode}) — {s.semester.name}
+                          </p>
+                          <p className="text-xs text-slate-500">
+                            {s.instructor.user.name} • {s.scheduleSlot} •{" "}
+                            {s.room ? `Room ${s.room} • ` : ""}
+                            {s.enrolledCount}/{s.maxCapacity} seats
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setEditingSectionId(s.id);
+                              setEditSecInstId(s.instructorId);
+                              setEditSecCode(s.sectionCode);
+                              setEditSecCap(s.maxCapacity);
+                              setEditSecSlot(s.scheduleSlot);
+                              setEditSecRoom(s.room ?? "");
+                            }}
+                          >
+                            <Pencil className="h-3.5 w-3.5" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-rose-600"
+                            disabled={deleteSectionMutation.isPending}
+                            onClick={() => deleteSectionMutation.mutate(s.id)}
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </CardContent>
           </Card>
         </div>
