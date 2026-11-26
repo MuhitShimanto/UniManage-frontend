@@ -13,6 +13,7 @@ import {
   CalendarCheck,
   CreditCard,
   FileClock,
+  FileText,
   GraduationCap,
   LayoutDashboard,
   LogOut,
@@ -46,7 +47,11 @@ const ROLE_NAV: Record<Role, NavItem[]> = {
     { href: "/dashboard/profile", label: "My Profile", icon: UserCircle },
   ],
   INSTRUCTOR: [
-    { href: "/instructor", label: "My Sections", icon: CalendarCheck },
+    { href: "/instructor", label: "Overview", icon: LayoutDashboard },
+    { href: "/instructor/sections", label: "Sections", icon: BookOpen },
+    { href: "/instructor/attendance", label: "Attendance", icon: CalendarCheck },
+    { href: "/instructor/grades", label: "Grades", icon: Award },
+    { href: "/instructor/syllabus", label: "Syllabus", icon: FileText },
     { href: "/instructor/profile", label: "My Profile", icon: UserCircle },
   ],
   ADMIN: [
