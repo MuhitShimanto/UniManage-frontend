@@ -93,7 +93,7 @@ export function CoursesCatalogClient() {
         <>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {courses.map((course) => (
-              <Card key={course.id} className="flex flex-col justify-between">
+              <Card key={course.id} interactive className="flex flex-col justify-between">
                 <CardHeader>
                   <div className="flex items-center justify-between gap-2">
                     <span className="rounded-md bg-indigo-50 px-2.5 py-0.5 text-xs font-semibold text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300">

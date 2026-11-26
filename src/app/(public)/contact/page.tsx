@@ -47,7 +47,7 @@ export default function ContactPage() {
 
       <div className="grid gap-8 md:grid-cols-3">
         <div className="space-y-4">
-          <Card>
+          <Card interactive>
             <CardContent className="flex items-start gap-3 p-5">
               <MapPin className="mt-0.5 h-5 w-5 text-indigo-600" />
               <div>
@@ -56,7 +56,7 @@ export default function ContactPage() {
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card interactive>
             <CardContent className="flex items-start gap-3 p-5">
               <Mail className="mt-0.5 h-5 w-5 text-indigo-600" />
               <div>
@@ -65,7 +65,7 @@ export default function ContactPage() {
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card interactive>
             <CardContent className="flex items-start gap-3 p-5">
               <Phone className="mt-0.5 h-5 w-5 text-indigo-600" />
               <div>

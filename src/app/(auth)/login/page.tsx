@@ -107,10 +107,10 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+    <div className="flex min-h-screen flex-col">
       <PublicNavbar />
-      <div className="mx-auto flex max-w-lg flex-col justify-center px-4 py-12">
-        <Card className="shadow-md">
+      <div className="flex flex-1 items-center justify-center px-4 py-8">
+        <Card className="w-full max-w-lg shadow-md">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl">Welcome Back</CardTitle>
             <CardDescription>

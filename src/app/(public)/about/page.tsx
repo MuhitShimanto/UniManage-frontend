@@ -49,7 +49,7 @@ export default async function AboutPage() {
 
       <div className="grid gap-6 md:grid-cols-3">
         {PILLARS.map((pillar) => (
-          <Card key={pillar.label} className="border-t-2 border-t-indigo-600">
+          <Card key={pillar.label} interactive className="border-t-2 border-t-indigo-600">
             <CardContent className="space-y-2.5 p-6">
               <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
                 {pillar.label}
@@ -78,7 +78,7 @@ export default async function AboutPage() {
         ) : (
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {departments.map((dept) => (
-              <Card key={dept.id} className="border-l-2 border-l-indigo-600">
+              <Card key={dept.id} interactive className="border-l-2 border-l-indigo-600">
                 <CardContent className="space-y-2 p-6">
                   <p className="text-xs font-semibold uppercase tracking-wider text-indigo-600">
                     {dept.code}

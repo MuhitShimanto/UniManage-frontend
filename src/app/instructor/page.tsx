@@ -125,7 +125,7 @@ export default function InstructorDashboardPage() {
       ) : (
         <div className="grid gap-5 md:grid-cols-2">
           {sections.map((section) => (
-            <Card key={section.id} className="flex flex-col justify-between">
+            <Card key={section.id} interactive className="flex flex-col justify-between">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <span className="rounded-md bg-sky-50 px-2.5 py-0.5 text-xs font-semibold text-sky-700 dark:bg-sky-950/60 dark:text-sky-300">

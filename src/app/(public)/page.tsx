@@ -62,9 +62,6 @@ export default async function HomePage() {
       <section className="relative overflow-hidden border-b border-slate-200/80 bg-gradient-to-b from-indigo-50/60 via-white/40 to-transparent py-16 sm:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
-            <span className="inline-flex items-center gap-2 rounded-full border border-indigo-200/80 bg-white/80 px-3.5 py-1 text-xs font-semibold text-indigo-700 shadow-xs backdrop-blur-sm">
-              Fall 2026 Admissions & Registration Open
-            </span>
             <h1 className="font-display mt-5 text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
               <BlurText text="One Unified Portal for" className="justify-center" />{" "}
               <BlurText
@@ -94,7 +91,7 @@ export default async function HomePage() {
 
           {/* Clean Minimalist Metrics */}
           <AnimatedContent delay={150} className="mt-14 grid gap-6 sm:grid-cols-3">
-            <Card className="border-l-2 border-l-indigo-600">
+            <Card interactive className="border-l-2 border-l-indigo-600">
               <CardContent className="p-6">
                 <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
                   Academic Departments
@@ -105,7 +102,7 @@ export default async function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="border-l-2 border-l-emerald-600">
+            <Card interactive className="border-l-2 border-l-emerald-600">
               <CardContent className="p-6">
                 <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
                   Accredited Programs
@@ -116,7 +113,7 @@ export default async function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="border-l-2 border-l-sky-600">
+            <Card interactive className="border-l-2 border-l-sky-600">
               <CardContent className="p-6">
                 <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
                   Active Courses
@@ -147,7 +144,11 @@ export default async function HomePage() {
 
           <AnimatedContent delay={100} className="grid gap-6 md:grid-cols-3">
             {PORTALS.map((portal) => (
-              <Card key={portal.eyebrow} className={`flex flex-col justify-between ${portal.accent}`}>
+              <Card
+                key={portal.eyebrow}
+                interactive
+                className={`flex flex-col justify-between ${portal.accent}`}
+              >
                 <CardContent className="flex h-full flex-col justify-between gap-6 p-6 sm:p-7">
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
@@ -190,7 +191,11 @@ export default async function HomePage() {
             </div>
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {courses.map((course) => (
-                <Card key={course.id} className="border-t-2 border-t-slate-200 hover:border-t-indigo-500">
+                <Card
+                  key={course.id}
+                  interactive
+                  className="border-t-2 border-t-slate-200 hover:border-t-indigo-500"
+                >
                   <CardContent className="flex h-full flex-col justify-between gap-4 p-6">
                     <div>
                       <div className="flex items-center justify-between text-xs">

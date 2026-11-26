@@ -22,7 +22,7 @@ export function StatCard({
   isLoading,
 }: StatCardProps) {
   return (
-    <Card>
+    <Card interactive>
       <CardContent className="p-6">
         <div className="flex items-center justify-between gap-4">
           <div className="space-y-1.5">

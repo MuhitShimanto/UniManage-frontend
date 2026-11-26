@@ -49,7 +49,7 @@ export default async function ProgramsPage() {
 
       <div className="grid gap-6 md:grid-cols-2">
         {programs.map((program) => (
-          <Card key={program.id}>
+          <Card key={program.id} interactive>
             <CardHeader>
               <div className="flex items-center justify-between">
                 <span className="rounded-md bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300">
