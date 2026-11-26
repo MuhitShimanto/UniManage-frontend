@@ -43,9 +43,9 @@ export default async function HomePage() {
               <GraduationCap className="h-3.5 w-3.5" />
               Fall 2026 Admissions & Registration Open
             </span>
-            <h1 className="mt-5 text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl dark:text-white">
+            <h1 className="font-display mt-5 text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
               One Unified Portal for{" "}
-              <span className="text-indigo-600 dark:text-indigo-400">Academic Excellence</span>
+              <span className="text-indigo-600">Academic Excellence</span>
             </h1>
             <p className="mt-5 text-base leading-relaxed text-slate-600 sm:text-lg dark:text-slate-300">
               Streamline course enrollment with prerequisite checks, real-time attendance,
