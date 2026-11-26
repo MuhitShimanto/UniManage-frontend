@@ -8,8 +8,11 @@ import {
   Award,
   BarChart3,
   BookOpen,
+  Building2,
+  Calendar,
   CalendarCheck,
   CreditCard,
+  FileClock,
   GraduationCap,
   LayoutDashboard,
   LogOut,
@@ -47,9 +50,12 @@ const ROLE_NAV: Record<Role, NavItem[]> = {
   ],
   ADMIN: [
     { href: "/admin", label: "Analytics", icon: BarChart3 },
-    { href: "/admin/academics", label: "Academics & Courses", icon: BookOpen },
+    { href: "/admin/courses", label: "Courses", icon: BookOpen },
+    { href: "/admin/departments", label: "Departments & Programs", icon: Building2 },
+    { href: "/admin/semesters", label: "Semesters", icon: Calendar },
     { href: "/admin/users", label: "Users & Faculty", icon: Users },
-    { href: "/admin/finance", label: "Finance & Audit", icon: Wallet },
+    { href: "/admin/finance", label: "Finance", icon: Wallet },
+    { href: "/admin/audit-logs", label: "Audit Logs", icon: FileClock },
   ],
 };
 

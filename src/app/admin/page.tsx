@@ -17,7 +17,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatCard } from "@/components/shared/StatCard";
 import { apiClient } from "@/lib/api-client";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { formatCurrency, formatDateTime } from "@/lib/utils";
 import type { AdminDashboardStats, ApiResponse, AuditLog } from "@/types/api";
 
 const PIE_COLORS = ["#4f46e5", "#0ea5e9", "#10b981"];
@@ -165,7 +165,7 @@ export default function AdminOverviewPage() {
                     ({log.entityType}) {log.actor ? `by ${log.actor.email}` : ""}
                   </span>
                 </div>
-                <span className="text-xs text-slate-400">{formatDate(log.createdAt)}</span>
+                <span className="text-xs text-slate-400">{formatDateTime(log.createdAt)}</span>
               </div>
             ))}
           </div>

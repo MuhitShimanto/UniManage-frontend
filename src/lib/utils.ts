@@ -24,6 +24,18 @@ export function formatDate(dateString?: string | null): string {
   }).format(new Date(dateString));
 }
 
+export function formatDateTime(dateString?: string | null): string {
+  if (!dateString) return "—";
+  return new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  }).format(new Date(dateString));
+}
+
 export function getRoleDashboardPath(role: Role): string {
   switch (role) {
     case "ADMIN":

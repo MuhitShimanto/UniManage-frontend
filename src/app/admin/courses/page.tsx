@@ -5,18 +5,26 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { ArrowLeft, ArrowRight, CheckCircle2, Pencil, Plus, Save, Trash2, X } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  CheckCircle2,
+  Pencil,
+  Plus,
+  Save,
+  Trash2,
+  X,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { StatusBadge } from "@/components/shared/StatusBadge";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { apiClient } from "@/lib/api-client";
-import { formatDate, getApiErrorMessage } from "@/lib/utils";
+import { getApiErrorMessage } from "@/lib/utils";
 import type { ApiResponse, Course, Department, Program, Section, Semester, User } from "@/types/api";
 
-type AcademicTab = "courses" | "departments" | "programs" | "semesters" | "sections";
+type CoursesTab = "courses" | "sections";
 
 const courseWizardSchema = z.object({
   code: z.string().min(2, "Course code required").max(20),
@@ -30,31 +38,24 @@ const courseWizardSchema = z.object({
 
 type CourseWizardValues = z.infer<typeof courseWizardSchema>;
 
-export default function AdminAcademicsPage() {
+export default function AdminCoursesPage() {
   const queryClient = useQueryClient();
-  const [tab, setTab] = useState<AcademicTab>("courses");
+  const [tab, setTab] = useState<CoursesTab>("courses");
   const [wizardStep, setWizardStep] = useState<1 | 2 | 3>(1);
 
-  // Simple creation states for dept, program, semester, section
-  const [deptCode, setDeptCode] = useState("");
-  const [deptName, setDeptName] = useState("");
-  const [progCode, setProgCode] = useState("");
-  const [progName, setProgName] = useState("");
-  const [progDeptId, setProgDeptId] = useState("");
-  const [semName, setSemName] = useState("");
-  const [semYear, setSemYear] = useState(2026);
-  const [semTerm, setSemTerm] = useState("Spring");
   const [secCourseId, setSecCourseId] = useState("");
   const [secSemId, setSecSemId] = useState("");
   const [secInstId, setSecInstId] = useState("");
   const [secCode, setSecCode] = useState("B");
   const [secSlot, setSecSlot] = useState("SUN-TUE 14:00-15:30");
+
   const [editingSectionId, setEditingSectionId] = useState<string | null>(null);
   const [editSecInstId, setEditSecInstId] = useState("");
   const [editSecCode, setEditSecCode] = useState("");
   const [editSecCap, setEditSecCap] = useState(40);
   const [editSecSlot, setEditSecSlot] = useState("");
   const [editSecRoom, setEditSecRoom] = useState("");
+
   const [confirmDelete, setConfirmDelete] = useState<{
     type: "course" | "section";
     id: string;
@@ -138,53 +139,6 @@ export default function AdminAcademicsPage() {
     onError: (err) => toast.error(getApiErrorMessage(err, "Failed to delete course")),
   });
 
-  const createDeptMutation = useMutation({
-    mutationFn: async () => apiClient.post("/departments", { code: deptCode, name: deptName }),
-    onSuccess: () => {
-      toast.success("Department created");
-      setDeptCode("");
-      setDeptName("");
-      queryClient.invalidateQueries({ queryKey: ["departments"] });
-    },
-    onError: (err) => toast.error(getApiErrorMessage(err, "Failed to create department")),
-  });
-
-  const createProgramMutation = useMutation({
-    mutationFn: async () =>
-      apiClient.post("/programs", {
-        code: progCode,
-        name: progName,
-        departmentId: progDeptId,
-        totalCreditsRequired: 130,
-      }),
-    onSuccess: () => {
-      toast.success("Program created");
-      setProgCode("");
-      setProgName("");
-      queryClient.invalidateQueries({ queryKey: ["programs"] });
-    },
-    onError: (err) => toast.error(getApiErrorMessage(err, "Failed to create program")),
-  });
-
-  const createSemesterMutation = useMutation({
-    mutationFn: async () =>
-      apiClient.post("/semesters", {
-        name: semName,
-        year: semYear,
-        term: semTerm,
-        startDate: new Date(`${semYear}-01-15T00:00:00Z`).toISOString(),
-        endDate: new Date(`${semYear}-05-15T00:00:00Z`).toISOString(),
-        isCurrent: false,
-        registrationOpen: true,
-      }),
-    onSuccess: () => {
-      toast.success("Semester created");
-      setSemName("");
-      queryClient.invalidateQueries({ queryKey: ["semesters"] });
-    },
-    onError: (err) => toast.error(getApiErrorMessage(err, "Failed to create semester")),
-  });
-
   const createSectionMutation = useMutation({
     mutationFn: async () =>
       apiClient.post("/sections", {
@@ -243,21 +197,19 @@ export default function AdminAcademicsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-          Academic Structure & Curriculum
-        </h1>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Courses & Sections</h1>
         <p className="text-sm text-slate-500">
-          Manage departments, programs, courses (with multi-step prerequisite wizard), semesters, and sections.
+          Create courses with prerequisites and manage active semester sections.
         </p>
       </div>
 
-      <div className="flex flex-wrap gap-2 border-b border-slate-200 dark:border-slate-800">
-        {(["courses", "departments", "programs", "semesters", "sections"] as const).map((t) => (
+      <div className="flex gap-2 border-b border-slate-200">
+        {(["courses", "sections"] as const).map((t) => (
           <button
             key={t}
             type="button"
             onClick={() => setTab(t)}
-            className={`border-b-2 px-4 py-2.5 text-sm font-medium capitalize cursor-pointer ${
+            className={`cursor-pointer border-b-2 px-4 py-2.5 text-sm font-medium capitalize ${
               tab === t
                 ? "border-indigo-600 text-indigo-600"
                 : "border-transparent text-slate-500 hover:text-slate-900"
@@ -270,7 +222,6 @@ export default function AdminAcademicsPage() {
 
       {tab === "courses" && (
         <div className="grid gap-6 lg:grid-cols-3">
-          {/* 3-Step Course Wizard */}
           <Card className="lg:col-span-1">
             <CardHeader>
               <CardTitle>Create Course Wizard</CardTitle>
@@ -313,7 +264,7 @@ export default function AdminAcademicsPage() {
                       <label className="text-xs font-medium">Department</label>
                       <select
                         {...register("departmentId")}
-                        className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm dark:border-slate-700 dark:bg-slate-950"
+                        className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm"
                       >
                         <option value="">Select Department...</option>
                         {departments.map((d) => (
@@ -330,7 +281,7 @@ export default function AdminAcademicsPage() {
                       <label className="text-xs font-medium">Program (Optional)</label>
                       <select
                         {...register("programId")}
-                        className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm dark:border-slate-700 dark:bg-slate-950"
+                        className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm"
                       >
                         <option value="">Any Program</option>
                         {programs.map((p) => (
@@ -348,7 +299,7 @@ export default function AdminAcademicsPage() {
                     <p className="text-xs font-medium text-slate-600">
                       Select Prerequisite Courses (Optional)
                     </p>
-                    <div className="max-h-44 space-y-1.5 overflow-y-auto rounded-lg border border-slate-200 p-2 dark:border-slate-800">
+                    <div className="max-h-44 space-y-1.5 overflow-y-auto rounded-lg border border-slate-200 p-2">
                       {courses.map((c) => {
                         const checked = selectedPrereqs.includes(c.id);
                         return (
@@ -413,7 +364,7 @@ export default function AdminAcademicsPage() {
             <CardHeader>
               <CardTitle>All Courses ({courses.length})</CardTitle>
             </CardHeader>
-            <CardContent className="divide-y divide-slate-100 dark:divide-slate-800">
+            <CardContent className="divide-y divide-slate-100">
               {courses.map((c) => (
                 <div key={c.id} className="flex items-center justify-between py-3 text-sm">
                   <div>
@@ -441,121 +392,6 @@ export default function AdminAcademicsPage() {
         </div>
       )}
 
-      {tab === "departments" && (
-        <div className="grid gap-6 md:grid-cols-2">
-          <Card>
-            <CardHeader>
-              <CardTitle>Add Department</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Input placeholder="Code (e.g. EEE)" value={deptCode} onChange={(e) => setDeptCode(e.target.value)} />
-              <Input placeholder="Department Name" value={deptName} onChange={(e) => setDeptName(e.target.value)} />
-              <Button disabled={!deptCode || !deptName || createDeptMutation.isPending} onClick={() => createDeptMutation.mutate()}>
-                <Plus className="h-4 w-4" />
-                Create Department
-              </Button>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Departments ({departments.length})</CardTitle>
-            </CardHeader>
-            <CardContent className="divide-y divide-slate-100 dark:divide-slate-800">
-              {departments.map((d) => (
-                <div key={d.id} className="py-2.5 text-sm">
-                  <span className="font-semibold text-indigo-600">{d.code}</span> — {d.name}
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        </div>
-      )}
-
-      {tab === "programs" && (
-        <div className="grid gap-6 md:grid-cols-2">
-          <Card>
-            <CardHeader>
-              <CardTitle>Add Degree Program</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Input placeholder="Code (e.g. BSC-EEE)" value={progCode} onChange={(e) => setProgCode(e.target.value)} />
-              <Input placeholder="Program Name" value={progName} onChange={(e) => setProgName(e.target.value)} />
-              <select
-                value={progDeptId}
-                onChange={(e) => setProgDeptId(e.target.value)}
-                className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm dark:border-slate-700 dark:bg-slate-950"
-              >
-                <option value="">Select Department...</option>
-                {departments.map((d) => (
-                  <option key={d.id} value={d.id}>
-                    {d.code} — {d.name}
-                  </option>
-                ))}
-              </select>
-              <Button
-                disabled={!progCode || !progName || !progDeptId || createProgramMutation.isPending}
-                onClick={() => createProgramMutation.mutate()}
-              >
-                <Plus className="h-4 w-4" />
-                Create Program
-              </Button>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Programs ({programs.length})</CardTitle>
-            </CardHeader>
-            <CardContent className="divide-y divide-slate-100 dark:divide-slate-800">
-              {programs.map((p) => (
-                <div key={p.id} className="py-2.5 text-sm">
-                  <span className="font-semibold text-emerald-600">{p.code}</span> — {p.name} (
-                  {p.totalCreditsRequired} Cr)
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        </div>
-      )}
-
-      {tab === "semesters" && (
-        <div className="grid gap-6 md:grid-cols-2">
-          <Card>
-            <CardHeader>
-              <CardTitle>Add Semester</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Input placeholder="Name (e.g. Spring 2027)" value={semName} onChange={(e) => setSemName(e.target.value)} />
-              <div className="grid grid-cols-2 gap-3">
-                <Input type="number" value={semYear} onChange={(e) => setSemYear(Number(e.target.value))} />
-                <Input placeholder="Term (Spring/Fall)" value={semTerm} onChange={(e) => setSemTerm(e.target.value)} />
-              </div>
-              <Button disabled={!semName || createSemesterMutation.isPending} onClick={() => createSemesterMutation.mutate()}>
-                <Plus className="h-4 w-4" />
-                Create Semester
-              </Button>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Semesters ({semesters.length})</CardTitle>
-            </CardHeader>
-            <CardContent className="divide-y divide-slate-100 dark:divide-slate-800">
-              {semesters.map((s) => (
-                <div key={s.id} className="flex items-center justify-between py-2.5 text-sm">
-                  <div>
-                    <p className="font-semibold">{s.name}</p>
-                    <p className="text-xs text-slate-500">
-                      {formatDate(s.startDate)} – {formatDate(s.endDate)}
-                    </p>
-                  </div>
-                  {s.isCurrent && <StatusBadge status="ACTIVE" />}
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        </div>
-      )}
-
       {tab === "sections" && (
         <div className="grid gap-6 md:grid-cols-2">
           <Card>
@@ -566,7 +402,7 @@ export default function AdminAcademicsPage() {
               <select
                 value={secCourseId}
                 onChange={(e) => setSecCourseId(e.target.value)}
-                className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm dark:border-slate-700 dark:bg-slate-950"
+                className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm"
               >
                 <option value="">Select Course...</option>
                 {courses.map((c) => (
@@ -578,7 +414,7 @@ export default function AdminAcademicsPage() {
               <select
                 value={secSemId}
                 onChange={(e) => setSecSemId(e.target.value)}
-                className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm dark:border-slate-700 dark:bg-slate-950"
+                className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm"
               >
                 <option value="">Select Semester...</option>
                 {semesters.map((s) => (
@@ -590,7 +426,7 @@ export default function AdminAcademicsPage() {
               <select
                 value={secInstId}
                 onChange={(e) => setSecInstId(e.target.value)}
-                className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm dark:border-slate-700 dark:bg-slate-950"
+                className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm"
               >
                 <option value="">Select Instructor...</option>
                 {instructors.map((u) =>
@@ -614,6 +450,7 @@ export default function AdminAcademicsPage() {
               </Button>
             </CardContent>
           </Card>
+
           <Card>
             <CardHeader>
               <CardTitle>Active Sections ({sections.length})</CardTitle>

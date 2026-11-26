@@ -10,7 +10,7 @@ import { fetchPublicApi } from "@/lib/server-api";
 import type { Course, Department, Program } from "@/types/api";
 
 export const metadata: Metadata = {
-  title: "Home — Modern University Management System",
+  title: "Home - Modern University Management System",
   description:
     "Explore degree programs, browse courses, register for semesters, track attendance and transcripts, and pay tuition securely.",
 };

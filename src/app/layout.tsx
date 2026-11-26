@@ -16,7 +16,7 @@ const plusJakarta = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   title: {
-    default: "UniManage — University Management System",
+    default: "UniManage - University Management System",
     template: "%s | UniManage",
   },
   description:
