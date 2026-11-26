@@ -148,11 +148,7 @@ export function DashboardShell({
           <div className="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white/75 p-3 backdrop-blur-xl ring-1 ring-white/90 ring-inset shadow-[0_6px_24px_-6px_rgba(79,70,229,0.14),inset_0_1px_1px_rgba(255,255,255,0.95)]">
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute -top-6 -right-6 h-20 w-20 rounded-full bg-indigo-400/20 blur-xl"
-            />
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute -bottom-6 -left-4 h-16 w-16 rounded-full bg-sky-400/20 blur-xl"
+              className="pointer-events-none absolute -top-6 -right-6 h-24 w-24 rounded-full bg-indigo-400/20 blur-xl"
             />
 
             <div className="relative flex items-center gap-2.5">
