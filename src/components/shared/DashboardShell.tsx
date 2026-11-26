@@ -184,15 +184,14 @@ export function DashboardShell({
             </div>
           </div>
 
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full justify-start text-rose-600 hover:bg-rose-50 hover:text-rose-700"
+          <button
+            type="button"
             onClick={handleLogout}
+            className="flex w-full cursor-pointer items-center justify-between rounded-xl border border-slate-200/80 bg-white/65 px-3.5 py-2.5 text-xs font-semibold text-slate-600 backdrop-blur-md ring-1 ring-white/80 ring-inset shadow-[0_2px_12px_-4px_rgba(15,23,42,0.06)] transition-all duration-150 active:scale-[0.98] hover:border-rose-200/80 hover:bg-rose-50/70 hover:text-rose-600"
           >
-            <LogOut className="h-4 w-4" />
-            Sign Out
-          </Button>
+            <span>Sign Out</span>
+            <LogOut className="h-3.5 w-3.5" />
+          </button>
         </div>
       </aside>
 
