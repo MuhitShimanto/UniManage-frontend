@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/shared/StatusBadge";
+import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { apiClient } from "@/lib/api-client";
 import { formatDate, getApiErrorMessage } from "@/lib/utils";
 import type { ApiResponse, Course, Department, Program, Section, Semester, User } from "@/types/api";
@@ -54,6 +55,11 @@ export default function AdminAcademicsPage() {
   const [editSecCap, setEditSecCap] = useState(40);
   const [editSecSlot, setEditSecSlot] = useState("");
   const [editSecRoom, setEditSecRoom] = useState("");
+  const [confirmDelete, setConfirmDelete] = useState<{
+    type: "course" | "section";
+    id: string;
+    label: string;
+  } | null>(null);
 
   const { data: departments = [] } = useQuery({
     queryKey: ["departments"],
@@ -126,6 +132,7 @@ export default function AdminAcademicsPage() {
     mutationFn: async (id: string) => apiClient.delete(`/courses/${id}`),
     onSuccess: () => {
       toast.success("Course deleted");
+      setConfirmDelete(null);
       queryClient.invalidateQueries({ queryKey: ["admin-courses"] });
     },
     onError: (err) => toast.error(getApiErrorMessage(err, "Failed to delete course")),
@@ -217,6 +224,7 @@ export default function AdminAcademicsPage() {
     mutationFn: async (sectionId: string) => apiClient.delete(`/sections/${sectionId}`),
     onSuccess: () => {
       toast.success("Section deleted");
+      setConfirmDelete(null);
       queryClient.invalidateQueries({ queryKey: ["sections"] });
     },
     onError: (err) => toast.error(getApiErrorMessage(err, "Failed to delete section")),
@@ -420,7 +428,9 @@ export default function AdminAcademicsPage() {
                     variant="ghost"
                     size="sm"
                     className="text-rose-600"
-                    onClick={() => deleteCourseMutation.mutate(c.id)}
+                    onClick={() =>
+                      setConfirmDelete({ type: "course", id: c.id, label: c.code })
+                    }
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -711,7 +721,13 @@ export default function AdminAcademicsPage() {
                             size="sm"
                             className="text-rose-600"
                             disabled={deleteSectionMutation.isPending}
-                            onClick={() => deleteSectionMutation.mutate(s.id)}
+                            onClick={() =>
+                              setConfirmDelete({
+                                type: "section",
+                                id: s.id,
+                                label: `${s.course.code} (Sec ${s.sectionCode})`,
+                              })
+                            }
                           >
                             <Trash2 className="h-3.5 w-3.5" />
                           </Button>
@@ -725,6 +741,22 @@ export default function AdminAcademicsPage() {
           </Card>
         </div>
       )}
+
+      <ConfirmDialog
+        open={Boolean(confirmDelete)}
+        title={`Delete ${confirmDelete?.label ?? ""}?`}
+        description="This action cannot be undone."
+        isLoading={deleteCourseMutation.isPending || deleteSectionMutation.isPending}
+        onCancel={() => setConfirmDelete(null)}
+        onConfirm={() => {
+          if (!confirmDelete) return;
+          if (confirmDelete.type === "course") {
+            deleteCourseMutation.mutate(confirmDelete.id);
+          } else {
+            deleteSectionMutation.mutate(confirmDelete.id);
+          }
+        }}
+      />
     </div>
   );
 }

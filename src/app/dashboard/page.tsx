@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Award, BookOpen, CreditCard, PlusCircle, Trash2 } from "lucide-react";
@@ -9,12 +10,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { StatCard } from "@/components/shared/StatCard";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { DataTable, type ColumnDef } from "@/components/shared/DataTable";
+import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { apiClient } from "@/lib/api-client";
 import { formatDate, getApiErrorMessage } from "@/lib/utils";
 import type { ApiResponse, Enrollment, FeeInvoice, User } from "@/types/api";
 
 export default function StudentOverviewPage() {
   const queryClient = useQueryClient();
+  const [confirmDrop, setConfirmDrop] = useState<{ id: string; code: string } | null>(null);
 
   const { data: me, isLoading: loadingMe } = useQuery({
     queryKey: ["users-me"],
@@ -46,6 +49,7 @@ export default function StudentOverviewPage() {
     },
     onSuccess: () => {
       toast.success("Course dropped successfully");
+      setConfirmDrop(null);
       queryClient.invalidateQueries({ queryKey: ["my-enrollments"] });
       queryClient.invalidateQueries({ queryKey: ["sections"] });
     },
@@ -108,7 +112,7 @@ export default function StudentOverviewPage() {
             size="sm"
             className="text-rose-600 hover:bg-rose-50 hover:text-rose-700"
             disabled={dropMutation.isPending}
-            onClick={() => dropMutation.mutate(row.id)}
+            onClick={() => setConfirmDrop({ id: row.id, code: row.section.course.code })}
           >
             <Trash2 className="h-4 w-4" />
             Drop
@@ -182,6 +186,18 @@ export default function StudentOverviewPage() {
           />
         </CardContent>
       </Card>
+
+      <ConfirmDialog
+        open={Boolean(confirmDrop)}
+        title={`Drop ${confirmDrop?.code ?? "course"}?`}
+        description="You will be removed from this section."
+        confirmLabel="Drop"
+        isLoading={dropMutation.isPending}
+        onCancel={() => setConfirmDrop(null)}
+        onConfirm={() => {
+          if (confirmDrop) dropMutation.mutate(confirmDrop.id);
+        }}
+      />
     </div>
   );
 }
