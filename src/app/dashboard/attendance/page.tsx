@@ -134,7 +134,12 @@ export default function StudentAttendancePage() {
 
       {/* Selected Section Details */}
       {activeSectionId && (
-        <>
+        <div className="space-y-4 border-t border-slate-200/80 pt-6">
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-500">
+            Selected Section — {enrollments[activeIndex]?.section.course.code} (Sec{" "}
+            {enrollments[activeIndex]?.section.sectionCode})
+          </h2>
+
           <div className="grid gap-4 sm:grid-cols-3">
             <StatCard
               title="Attendance Rate"
@@ -196,7 +201,7 @@ export default function StudentAttendancePage() {
               )}
             </CardContent>
           </Card>
-        </>
+        </div>
       )}
     </div>
   );
