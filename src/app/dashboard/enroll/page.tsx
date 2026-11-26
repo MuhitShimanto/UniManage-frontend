@@ -92,6 +92,11 @@ function EnrollClient() {
   const enrolledSectionIds = new Set(
     myEnrollments.filter((e) => e.status === "ENROLLED").map((e) => e.sectionId)
   );
+  const completedCourseIds = new Set(
+    myEnrollments
+      .filter((e) => e.status === "COMPLETED" && (e.examResult ? e.examResult.gradePoint > 0 : true))
+      .map((e) => e.section.courseId)
+  );
 
   const filteredSections = sections.filter((s) => {
     if (!q) return true;
@@ -151,6 +156,7 @@ function EnrollClient() {
         <div className="grid gap-5 md:grid-cols-2">
           {filteredSections.map((section) => {
             const isEnrolled = enrolledSectionIds.has(section.id);
+            const isCompleted = completedCourseIds.has(section.courseId);
             const clashingEnrollment = myEnrollments.find(
               (e) =>
                 e.status === "ENROLLED" &&
@@ -215,18 +221,24 @@ function EnrollClient() {
                     className="w-full"
                     disabled={
                       isEnrolled ||
+                      isCompleted ||
                       Boolean(clashingEnrollment) ||
                       isFull ||
                       !section.semester.registrationOpen ||
                       enrollMutation.isPending
                     }
-                    variant={isEnrolled ? "secondary" : "default"}
+                    variant={isEnrolled || isCompleted ? "secondary" : "default"}
                     onClick={() => enrollMutation.mutate(section.id)}
                   >
                     {isEnrolled ? (
                       <>
                         <Check className="h-4 w-4" />
                         Already Enrolled
+                      </>
+                    ) : isCompleted ? (
+                      <>
+                        <Check className="h-4 w-4" />
+                        Already Completed
                       </>
                     ) : clashingEnrollment ? (
                       `Time Clash (${clashingEnrollment.section.course.code})`
