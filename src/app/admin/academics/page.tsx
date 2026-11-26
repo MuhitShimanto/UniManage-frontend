@@ -238,7 +238,10 @@ export default function AdminAcademicsPage() {
             </CardHeader>
             <CardContent>
               <form
-                onSubmit={handleSubmit((vals) => createCourseMutation.mutate(vals))}
+                onSubmit={handleSubmit((vals) => {
+                  if (wizardStep !== 3) return;
+                  createCourseMutation.mutate(vals);
+                })}
                 className="space-y-4"
               >
                 {wizardStep === 1 && (
@@ -346,12 +349,17 @@ export default function AdminAcademicsPage() {
                   )}
 
                   {wizardStep < 3 ? (
-                    <Button type="button" size="sm" onClick={nextWizardStep}>
+                    <Button key="wizard-next" type="button" size="sm" onClick={nextWizardStep}>
                       Next
                       <ArrowRight className="h-3.5 w-3.5" />
                     </Button>
                   ) : (
-                    <Button type="submit" size="sm" disabled={createCourseMutation.isPending}>
+                    <Button
+                      key="wizard-submit"
+                      type="submit"
+                      size="sm"
+                      disabled={createCourseMutation.isPending}
+                    >
                       <CheckCircle2 className="h-3.5 w-3.5" />
                       {createCourseMutation.isPending ? "Creating..." : "Create Course"}
                     </Button>
