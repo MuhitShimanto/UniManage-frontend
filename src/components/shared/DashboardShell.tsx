@@ -53,6 +53,12 @@ const ROLE_NAV: Record<Role, NavItem[]> = {
   ],
 };
 
+const ROLE_CARD_STYLES: Record<Role, string> = {
+  ADMIN: "border-purple-200/70 bg-purple-50/65",
+  INSTRUCTOR: "border-sky-200/70 bg-sky-50/65",
+  STUDENT: "border-indigo-200/70 bg-indigo-50/65",
+};
+
 export function DashboardShell({
   role,
   children,
@@ -143,14 +149,14 @@ export function DashboardShell({
         </div>
 
         <div className="shrink-0 space-y-3 border-t border-slate-200/80 p-4">
-          {/* Flat Glass User + Role Card with Faded Light Radius */}
-          <div className="relative overflow-hidden rounded-xl border border-slate-200/80 bg-white/65 p-3 backdrop-blur-md ring-1 ring-white/80 ring-inset shadow-[0_2px_12px_-4px_rgba(15,23,42,0.06)]">
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute -top-6 -right-6 h-24 w-24 rounded-full bg-indigo-400/20 blur-xl"
-            />
-
-            <div className="relative flex items-center gap-2.5">
+          {/* Flat Role-Tinted Glass User + Role Card */}
+          <div
+            className={cn(
+              "rounded-xl border p-3 backdrop-blur-md ring-1 ring-white/80 ring-inset shadow-[0_2px_12px_-4px_rgba(15,23,42,0.06)]",
+              ROLE_CARD_STYLES[role]
+            )}
+          >
+            <div className="flex items-center gap-2.5">
               {user?.avatarUrl ? (
                 <Image
                   src={user.avatarUrl}
