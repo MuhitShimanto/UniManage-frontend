@@ -22,6 +22,7 @@ function InstructorAttendanceClient() {
 
   const [selectedSectionId, setSelectedSectionId] = useState(initialSectionId);
   const [subTab, setSubTab] = useState<"submit" | "history">("submit");
+  const [selectedHistoryDate, setSelectedHistoryDate] = useState("");
   const [attendanceDate, setAttendanceDate] = useState(
     () => new Date().toISOString().split("T")[0]
   );
@@ -281,17 +282,35 @@ function InstructorAttendanceClient() {
           description="Submitted attendance sessions for this section will appear here."
         />
       ) : (
-        <div className="space-y-4">
-          {historyByDate.map(([dateKey, entries]) => (
-            <Card key={dateKey}>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base">{formatDate(dateKey)}</CardTitle>
-                <CardDescription>{entries.length} student records</CardDescription>
+        (() => {
+          const activeEntry =
+            historyByDate.find(([d]) => d === selectedHistoryDate) ?? historyByDate[0];
+          const [activeDateKey, entries] = activeEntry;
+
+          return (
+            <Card>
+              <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <CardTitle className="text-base">{formatDate(activeDateKey)}</CardTitle>
+                  <CardDescription>{entries.length} student records</CardDescription>
+                </div>
+                <select
+                  value={activeDateKey}
+                  onChange={(e) => setSelectedHistoryDate(e.target.value)}
+                  aria-label="Select session date"
+                  className="h-9 rounded-lg border border-slate-200 bg-white px-3 text-sm"
+                >
+                  {historyByDate.map(([dateKey]) => (
+                    <option key={dateKey} value={dateKey}>
+                      {formatDate(dateKey)}
+                    </option>
+                  ))}
+                </select>
               </CardHeader>
               <CardContent className="divide-y divide-slate-100">
                 {entries.map((entry) => (
                   <div
-                    key={`${dateKey}-${entry.studentCode}`}
+                    key={`${activeDateKey}-${entry.studentCode}`}
                     className="flex items-center justify-between py-2.5 text-sm"
                   >
                     <div>
@@ -308,8 +327,8 @@ function InstructorAttendanceClient() {
                 ))}
               </CardContent>
             </Card>
-          ))}
-        </div>
+          );
+        })()
       )}
     </div>
   );
