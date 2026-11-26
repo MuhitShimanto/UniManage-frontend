@@ -230,23 +230,32 @@ export interface StudentSectionAttendance {
 }
 
 export interface TranscriptCourseItem {
-  courseCode: string;
-  courseTitle: string;
+  code: string;
+  title: string;
   credits: number;
-  semester: string;
   totalScore: number;
   grade: string;
   gradePoint: number;
-  publishedAt?: string | null;
+}
+
+export interface TranscriptSemester {
+  semesterName: string;
+  semesterGpa: number;
+  creditsEarned: number;
+  courses: TranscriptCourseItem[];
 }
 
 export interface Transcript {
-  studentCode: string;
-  studentName: string;
-  program?: string;
-  cgpa: number;
-  totalCreditsEarned: number;
-  courses: TranscriptCourseItem[];
+  student: {
+    name: string;
+    email: string;
+    studentCode: string;
+    program?: Program;
+    admissionYear: number;
+  };
+  cumulativeCgpa: number;
+  totalCreditsCompleted: number;
+  semesters: TranscriptSemester[];
 }
 
 export interface FeeInvoice {

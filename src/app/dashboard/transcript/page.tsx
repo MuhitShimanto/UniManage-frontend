@@ -58,17 +58,21 @@ export default function TranscriptAndAttendancePage() {
       <div className="grid gap-4 sm:grid-cols-2">
         <StatCard
           title="Cumulative GPA"
-          value={transcript?.cgpa?.toFixed(2) ?? "0.00"}
-          subtitle={transcript?.studentCode ? `Student Code: ${transcript.studentCode}` : undefined}
+          value={transcript?.cumulativeCgpa?.toFixed(2) ?? "0.00"}
+          subtitle={
+            transcript?.student?.studentCode
+              ? `Student Code: ${transcript.student.studentCode}`
+              : undefined
+          }
           icon={Award}
           isLoading={loadingTranscript}
         />
         <StatCard
           title="Total Credits Earned"
-          value={transcript?.totalCreditsEarned ?? 0}
+          value={transcript?.totalCreditsCompleted ?? 0}
           subtitle="From published course results"
           icon={CalendarCheck}
-          iconClassName="bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400"
+          iconClassName="bg-emerald-50 text-emerald-600"
           isLoading={loadingTranscript}
         />
       </div>
@@ -76,45 +80,60 @@ export default function TranscriptAndAttendancePage() {
       <Card>
         <CardHeader>
           <CardTitle>Published Grades</CardTitle>
-          <CardDescription>Official transcript courses</CardDescription>
+          <CardDescription>Official transcript courses grouped by semester</CardDescription>
         </CardHeader>
         <CardContent>
           {loadingTranscript ? (
             <Skeleton className="h-40 w-full" />
-          ) : !transcript || transcript.courses.length === 0 ? (
+          ) : !transcript || (transcript.semesters?.length ?? 0) === 0 ? (
             <EmptyState
               icon={Award}
               title="No published grades yet"
               description="Your grades will appear here once instructors publish your final exam results."
             />
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
-                <thead className="border-b border-slate-200 text-xs uppercase text-slate-500 dark:border-slate-800">
-                  <tr>
-                    <th className="py-2.5 pr-4">Course</th>
-                    <th className="py-2.5 pr-4">Semester</th>
-                    <th className="py-2.5 pr-4">Credits</th>
-                    <th className="py-2.5 pr-4">Score</th>
-                    <th className="py-2.5 pr-4">Grade</th>
-                    <th className="py-2.5">GP</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                  {transcript.courses.map((c, idx) => (
-                    <tr key={`${c.courseCode}-${idx}`}>
-                      <td className="py-3 pr-4 font-medium">
-                        {c.courseCode} — {c.courseTitle}
-                      </td>
-                      <td className="py-3 pr-4 text-slate-500">{c.semester}</td>
-                      <td className="py-3 pr-4">{c.credits}</td>
-                      <td className="py-3 pr-4">{c.totalScore}</td>
-                      <td className="py-3 pr-4 font-semibold text-indigo-600">{c.grade}</td>
-                      <td className="py-3 font-mono">{c.gradePoint.toFixed(2)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="space-y-6">
+              {transcript.semesters.map((sem) => (
+                <div key={sem.semesterName} className="space-y-3">
+                  <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-slate-50 px-3.5 py-2 text-sm">
+                    <span className="font-semibold text-slate-900">{sem.semesterName}</span>
+                    <div className="flex gap-4 text-xs text-slate-600">
+                      <span>
+                        Semester GPA: <strong className="text-indigo-600">{sem.semesterGpa.toFixed(2)}</strong>
+                      </span>
+                      <span>
+                        Credits: <strong>{sem.creditsEarned}</strong>
+                      </span>
+                    </div>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm">
+                      <thead className="border-b border-slate-200 text-xs uppercase text-slate-500">
+                        <tr>
+                          <th className="py-2.5 pr-4">Course</th>
+                          <th className="py-2.5 pr-4">Credits</th>
+                          <th className="py-2.5 pr-4">Score</th>
+                          <th className="py-2.5 pr-4">Grade</th>
+                          <th className="py-2.5">GP</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {sem.courses.map((c) => (
+                          <tr key={c.code}>
+                            <td className="py-3 pr-4 font-medium">
+                              {c.code} — {c.title}
+                            </td>
+                            <td className="py-3 pr-4">{c.credits}</td>
+                            <td className="py-3 pr-4">{c.totalScore}</td>
+                            <td className="py-3 pr-4 font-semibold text-indigo-600">{c.grade}</td>
+                            <td className="py-3 font-mono">{c.gradePoint.toFixed(2)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </CardContent>
