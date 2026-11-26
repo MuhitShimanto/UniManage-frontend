@@ -1,6 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { CountUp } from "@/components/animations/CountUp";
 import { cn } from "@/lib/utils";
 
 interface StatCardProps {
@@ -29,8 +30,8 @@ export function StatCard({
             {isLoading ? (
               <Skeleton className="h-8 w-24" />
             ) : (
-              <p className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-                {value}
+              <p className="text-2xl font-bold tracking-tight text-slate-900">
+                {typeof value === "number" ? <CountUp to={value} /> : value}
               </p>
             )}
             {subtitle && (

@@ -13,6 +13,9 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { BlurText } from "@/components/animations/BlurText";
+import { CountUp } from "@/components/animations/CountUp";
+import { AnimatedContent } from "@/components/animations/AnimatedContent";
 import { fetchPublicApi } from "@/lib/server-api";
 import type { Course, Department, Program } from "@/types/api";
 
@@ -44,8 +47,12 @@ export default async function HomePage() {
               Fall 2026 Admissions & Registration Open
             </span>
             <h1 className="font-display mt-5 text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
-              One Unified Portal for{" "}
-              <span className="text-indigo-600">Academic Excellence</span>
+              <BlurText text="One Unified Portal for" className="justify-center" />{" "}
+              <BlurText
+                text="Academic Excellence"
+                delay={70}
+                className="justify-center text-indigo-600"
+              />
             </h1>
             <p className="mt-5 text-base leading-relaxed text-slate-600 sm:text-lg dark:text-slate-300">
               Streamline course enrollment with prerequisite checks, real-time attendance,
@@ -67,15 +74,15 @@ export default async function HomePage() {
           </div>
 
           {/* Live Academic Snapshot */}
-          <div className="mt-14 grid gap-4 sm:grid-cols-3">
+          <AnimatedContent delay={150} className="mt-14 grid gap-4 sm:grid-cols-3">
             <Card>
               <CardContent className="flex items-center gap-4 p-6">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-400">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
                   <Building2 className="h-6 w-6" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-slate-900 dark:text-white">
-                    {departments.length || "2+"}
+                  <p className="text-2xl font-bold text-slate-900">
+                    <CountUp to={departments.length || 2} suffix={departments.length ? "" : "+"} />
                   </p>
                   <p className="text-sm text-slate-500">Academic Departments</p>
                 </div>
@@ -83,12 +90,12 @@ export default async function HomePage() {
             </Card>
             <Card>
               <CardContent className="flex items-center gap-4 p-6">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
                   <Award className="h-6 w-6" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-slate-900 dark:text-white">
-                    {programs.length || "2+"}
+                  <p className="text-2xl font-bold text-slate-900">
+                    <CountUp to={programs.length || 2} suffix={programs.length ? "" : "+"} />
                   </p>
                   <p className="text-sm text-slate-500">Accredited Programs</p>
                 </div>
@@ -96,18 +103,21 @@ export default async function HomePage() {
             </Card>
             <Card>
               <CardContent className="flex items-center gap-4 p-6">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-50 text-sky-600 dark:bg-sky-950/60 dark:text-sky-400">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-50 text-sky-600">
                   <BookOpen className="h-6 w-6" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-slate-900 dark:text-white">
-                    {courseRes?.meta?.total ?? (courses.length || "10+")}
+                  <p className="text-2xl font-bold text-slate-900">
+                    <CountUp
+                      to={courseRes?.meta?.total ?? (courses.length || 10)}
+                      suffix={courseRes?.meta?.total || courses.length ? "" : "+"}
+                    />
                   </p>
                   <p className="text-sm text-slate-500">Active Courses</p>
                 </div>
               </CardContent>
             </Card>
-          </div>
+          </AnimatedContent>
         </div>
       </section>
 
@@ -123,7 +133,7 @@ export default async function HomePage() {
             </p>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-3">
+          <AnimatedContent delay={100} className="grid gap-6 md:grid-cols-3">
             <Card className="flex flex-col justify-between">
               <CardHeader>
                 <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-400">
@@ -174,7 +184,7 @@ export default async function HomePage() {
                 <p className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-500" /> Full System Audit Trail</p>
               </CardContent>
             </Card>
-          </div>
+          </AnimatedContent>
         </div>
       </section>
 
