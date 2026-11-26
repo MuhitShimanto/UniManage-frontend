@@ -143,7 +143,51 @@ export function DashboardShell({
           </nav>
         </div>
 
-        <div className="shrink-0 border-t border-slate-200/80 p-4">
+        <div className="shrink-0 space-y-3 border-t border-slate-200/80 p-4">
+          {/* Premium Glass User + Role Card with Faded Light Radius & Rounded Depth Border */}
+          <div className="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white/75 p-3 backdrop-blur-xl ring-1 ring-white/90 ring-inset shadow-[0_6px_24px_-6px_rgba(79,70,229,0.14),inset_0_1px_1px_rgba(255,255,255,0.95)]">
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -top-6 -right-6 h-20 w-20 rounded-full bg-indigo-400/20 blur-xl"
+            />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -bottom-6 -left-4 h-16 w-16 rounded-full bg-sky-400/20 blur-xl"
+            />
+
+            <div className="relative flex items-center gap-2.5">
+              {user?.avatarUrl ? (
+                <Image
+                  src={user.avatarUrl}
+                  alt={user.name}
+                  width={36}
+                  height={36}
+                  className="h-9 w-9 shrink-0 rounded-full object-cover ring-2 ring-white shadow-xs"
+                />
+              ) : (
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-sky-500 text-xs font-bold text-white ring-2 ring-white shadow-xs">
+                  {user?.name?.charAt(0)?.toUpperCase() ?? "U"}
+                </div>
+              )}
+
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-xs font-semibold text-slate-900">
+                  {user?.name ?? "Portal User"}
+                </p>
+                <p className="truncate text-[11px] text-slate-500">
+                  {user?.email ?? ""}
+                </p>
+              </div>
+            </div>
+
+            <div className="relative mt-2.5 flex items-center justify-between border-t border-slate-200/60 pt-2">
+              <span className="text-[10px] font-medium uppercase tracking-wider text-slate-400">
+                Role
+              </span>
+              <StatusBadge status={role} />
+            </div>
+          </div>
+
           <Button
             variant="outline"
             size="sm"
@@ -158,7 +202,7 @@ export function DashboardShell({
 
       {/* Main Content shifted right on lg screens */}
       <div className="flex min-h-screen flex-col lg:pl-64">
-        <header className="sticky top-0 z-30 flex min-h-16 items-center justify-between gap-4 border-b border-slate-200/80 bg-white/80 px-4 py-2.5 backdrop-blur-md sm:px-6">
+        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-slate-200/80 bg-white/80 px-4 backdrop-blur-md sm:px-6">
           <div className="flex items-center gap-3">
             <button
               type="button"
@@ -180,42 +224,9 @@ export function DashboardShell({
             </div>
           </div>
 
-          {/* Premium Glass User + Role Pill with Faded Light Radius & Rounded Depth Border */}
-          <div className="relative flex items-center gap-3 overflow-hidden rounded-2xl border border-slate-200/80 bg-white/70 px-3.5 py-1.5 backdrop-blur-xl ring-1 ring-white/90 ring-inset shadow-[0_6px_24px_-6px_rgba(79,70,229,0.14),inset_0_1px_1px_rgba(255,255,255,0.95)]">
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute -top-6 -right-6 h-20 w-20 rounded-full bg-indigo-400/15 blur-xl"
-            />
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute -bottom-6 -left-4 h-16 w-16 rounded-full bg-sky-400/15 blur-xl"
-            />
-
-            {user?.avatarUrl ? (
-              <Image
-                src={user.avatarUrl}
-                alt={user.name}
-                width={34}
-                height={34}
-                className="relative h-8.5 w-8.5 rounded-full object-cover ring-2 ring-white shadow-xs"
-              />
-            ) : (
-              <div className="relative flex h-8.5 w-8.5 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-sky-500 text-xs font-bold text-white ring-2 ring-white shadow-xs">
-                {user?.name?.charAt(0)?.toUpperCase() ?? "U"}
-              </div>
-            )}
-
-            <div className="relative hidden min-w-0 sm:block">
-              <p className="truncate text-xs font-semibold text-slate-900">
-                {user?.name ?? "Portal User"}
-              </p>
-              <p className="truncate text-[11px] text-slate-500">
-                {user?.email ?? ""}
-              </p>
-            </div>
-
-            <StatusBadge status={role} className="relative shrink-0" />
-          </div>
+          <Link href="/courses" className="text-xs font-medium text-indigo-600 hover:underline">
+            Public Course Catalog →
+          </Link>
         </header>
 
         <main className="flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
