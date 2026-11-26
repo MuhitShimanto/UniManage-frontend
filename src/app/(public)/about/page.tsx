@@ -11,25 +11,22 @@ export const metadata: Metadata = {
 
 const PILLARS = [
   {
-    index: "01 / ACADEMICS",
+    label: "Academics",
     title: "Transparent Course Registration",
     description:
       "Real-time seat capacity tracking, automated prerequisite verification, and instant GPA computation.",
-    spec: "18-Credit Semester Cap",
   },
   {
-    index: "02 / GOVERNANCE",
-    title: "Strict Role-Based Access",
+    label: "Governance",
+    title: "Role-Based Access Control",
     description:
-      "Clean separation between Student, Instructor, and Registrar Admin workflows enforced at edge and API.",
-    spec: "3 Fixed Primary Roles",
+      "Strict separation between Student, Instructor, and Registrar Admin workflows enforced at edge and API.",
   },
   {
-    index: "03 / SETTLEMENT",
-    title: "Verified Tuition Checkout",
+    label: "Payments",
+    title: "Verified Tuition Settlement",
     description:
       "End-to-end SSLCommerz gateway integration for secure BDT tuition and registration fee settlement.",
-    spec: "SSLCommerz Gateway",
   },
 ];
 
@@ -40,9 +37,6 @@ export default async function AboutPage() {
   return (
     <div className="mx-auto max-w-7xl space-y-12 px-4 py-12 sm:px-6 lg:px-8">
       <div className="max-w-3xl space-y-4">
-        <p className="font-mono text-xs font-semibold uppercase tracking-wider text-indigo-600">
-          Platform Architecture
-        </p>
         <h1 className="font-display text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
           About Our University & Digital Campus
         </h1>
@@ -55,20 +49,13 @@ export default async function AboutPage() {
 
       <div className="grid gap-6 md:grid-cols-3">
         {PILLARS.map((pillar) => (
-          <Card key={pillar.index}>
-            <CardContent className="flex h-full flex-col justify-between gap-5 p-6">
-              <div>
-                <p className="font-mono text-[11px] font-semibold uppercase tracking-wider text-indigo-600">
-                  {pillar.index}
-                </p>
-                <h2 className="mt-2 text-lg font-bold text-slate-900">{pillar.title}</h2>
-                <p className="mt-2 text-sm leading-relaxed text-slate-600">{pillar.description}</p>
-              </div>
-              <div className="border-t border-slate-100 pt-3">
-                <span className="rounded-full bg-slate-100 px-2.5 py-1 font-mono text-[11px] font-medium text-slate-700">
-                  {pillar.spec}
-                </span>
-              </div>
+          <Card key={pillar.label} className="border-t-2 border-t-indigo-600">
+            <CardContent className="space-y-2.5 p-6">
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                {pillar.label}
+              </p>
+              <h2 className="text-lg font-bold text-slate-900">{pillar.title}</h2>
+              <p className="text-sm leading-relaxed text-slate-600">{pillar.description}</p>
             </CardContent>
           </Card>
         ))}
@@ -76,10 +63,7 @@ export default async function AboutPage() {
 
       <section className="space-y-6">
         <div>
-          <p className="font-mono text-xs font-semibold uppercase tracking-wider text-indigo-600">
-            Faculties
-          </p>
-          <h2 className="mt-1 text-2xl font-bold text-slate-900">Academic Departments</h2>
+          <h2 className="text-2xl font-bold text-slate-900">Academic Departments</h2>
           <p className="text-sm text-slate-500">
             Active faculties offering undergraduate and graduate programs
           </p>
@@ -94,14 +78,11 @@ export default async function AboutPage() {
         ) : (
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {departments.map((dept) => (
-              <Card key={dept.id}>
-                <CardContent className="space-y-3 p-6">
-                  <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                    <span className="font-mono text-xs font-bold uppercase tracking-wider text-indigo-600">
-                      DEPT / {dept.code}
-                    </span>
-                    <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                  </div>
+              <Card key={dept.id} className="border-l-2 border-l-indigo-600">
+                <CardContent className="space-y-2 p-6">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-indigo-600">
+                    {dept.code}
+                  </p>
                   <h3 className="text-lg font-bold text-slate-900">{dept.name}</h3>
                   <p className="text-sm text-slate-600">
                     {dept.description || "Academic department offering accredited degree programs."}
