@@ -23,7 +23,9 @@ export default function StudentAttendancePage() {
     },
   });
 
-  const enrollments = rawEnrollments.filter((e) => e.status !== "DROPPED");
+  const enrollments = rawEnrollments.filter(
+    (e) => e.status !== "DROPPED" && Boolean(e.section?.semester?.isCurrent)
+  );
 
   const sectionQueries = useQueries({
     queries: enrollments.map((e) => ({
