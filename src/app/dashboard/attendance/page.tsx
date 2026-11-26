@@ -15,13 +15,15 @@ import type { ApiResponse, Enrollment, StudentSectionAttendance } from "@/types/
 export default function StudentAttendancePage() {
   const [selectedSectionId, setSelectedSectionId] = useState<string>("");
 
-  const { data: enrollments = [], isLoading: loadingEnrollments } = useQuery({
+  const { data: rawEnrollments = [], isLoading: loadingEnrollments } = useQuery({
     queryKey: ["my-enrollments"],
     queryFn: async () => {
       const res = await apiClient.get<ApiResponse<Enrollment[]>>("/enrollments/my");
       return res.data.data;
     },
   });
+
+  const enrollments = rawEnrollments.filter((e) => e.status !== "DROPPED");
 
   const sectionQueries = useQueries({
     queries: enrollments.map((e) => ({
