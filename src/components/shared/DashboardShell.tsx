@@ -21,7 +21,6 @@ import {
   X,
 } from "lucide-react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { apiClient } from "@/lib/api-client";
 import { cn } from "@/lib/utils";
@@ -144,8 +143,8 @@ export function DashboardShell({
         </div>
 
         <div className="shrink-0 space-y-3 border-t border-slate-200/80 p-4">
-          {/* Premium Glass User + Role Card with Faded Light Radius & Rounded Depth Border */}
-          <div className="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white/75 p-3 backdrop-blur-xl ring-1 ring-white/90 ring-inset shadow-[0_6px_24px_-6px_rgba(79,70,229,0.14),inset_0_1px_1px_rgba(255,255,255,0.95)]">
+          {/* Flat Glass User + Role Card with Faded Light Radius */}
+          <div className="relative overflow-hidden rounded-xl border border-slate-200/80 bg-white/65 p-3 backdrop-blur-md ring-1 ring-white/80 ring-inset shadow-[0_2px_12px_-4px_rgba(15,23,42,0.06)]">
             <div
               aria-hidden="true"
               className="pointer-events-none absolute -top-6 -right-6 h-24 w-24 rounded-full bg-indigo-400/20 blur-xl"
