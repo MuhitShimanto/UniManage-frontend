@@ -44,7 +44,7 @@ export function ConfirmDialog({
       }}
     >
       <div
-        className="w-full max-w-sm rounded-2xl border border-slate-200/80 bg-white/95 p-6 backdrop-blur-xl ring-1 ring-white/90 ring-inset shadow-[0_20px_50px_-12px_rgba(15,23,42,0.2)]"
+        className="w-full max-w-sm rounded-2xl border border-slate-300/80 bg-white/95 p-6 backdrop-blur-xl shadow-[0_20px_50px_-12px_rgba(15,23,42,0.2)]"
         onClick={(e) => e.stopPropagation()}
       >
         <h3 id="confirm-dialog-title" className="text-base font-bold text-slate-900">
