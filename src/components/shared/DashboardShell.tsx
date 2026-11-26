@@ -40,7 +40,8 @@ const ROLE_NAV: Record<Role, NavItem[]> = {
   STUDENT: [
     { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
     { href: "/dashboard/enroll", label: "Course Registration", icon: BookOpen },
-    { href: "/dashboard/transcript", label: "Transcript & Attendance", icon: Award },
+    { href: "/dashboard/transcript", label: "Transcript", icon: Award },
+    { href: "/dashboard/attendance", label: "Attendance", icon: CalendarCheck },
     { href: "/dashboard/payments", label: "Tuition & Payments", icon: CreditCard },
     { href: "/dashboard/profile", label: "My Profile", icon: UserCircle },
   ],

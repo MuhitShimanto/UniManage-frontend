@@ -1,21 +1,16 @@
 "use client";
 
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Award, CalendarCheck } from "lucide-react";
+import { Award, BookOpen } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { StatCard } from "@/components/shared/StatCard";
-import { StatusBadge } from "@/components/shared/StatusBadge";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { apiClient } from "@/lib/api-client";
-import { formatDate } from "@/lib/utils";
-import type { ApiResponse, Enrollment, StudentSectionAttendance, Transcript } from "@/types/api";
+import type { ApiResponse, Transcript } from "@/types/api";
 
-export default function TranscriptAndAttendancePage() {
-  const [selectedSectionId, setSelectedSectionId] = useState<string>("");
-
-  const { data: transcript, isLoading: loadingTranscript } = useQuery({
+export default function StudentTranscriptPage() {
+  const { data: transcript, isLoading } = useQuery({
     queryKey: ["my-transcript"],
     queryFn: async () => {
       const res = await apiClient.get<ApiResponse<Transcript>>("/transcripts/me");
@@ -23,35 +18,14 @@ export default function TranscriptAndAttendancePage() {
     },
   });
 
-  const { data: enrollments = [] } = useQuery({
-    queryKey: ["my-enrollments"],
-    queryFn: async () => {
-      const res = await apiClient.get<ApiResponse<Enrollment[]>>("/enrollments/my");
-      return res.data.data;
-    },
-  });
-
-  const activeSectionId = selectedSectionId || enrollments[0]?.sectionId || "";
-
-  const { data: attendance, isLoading: loadingAttendance } = useQuery({
-    queryKey: ["my-attendance", activeSectionId],
-    enabled: Boolean(activeSectionId),
-    queryFn: async () => {
-      const res = await apiClient.get<ApiResponse<StudentSectionAttendance>>(
-        `/attendance/student/${activeSectionId}`
-      );
-      return res.data.data;
-    },
-  });
-
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-          Academic Transcript & Attendance
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+          Academic Transcript
         </h1>
         <p className="text-sm text-slate-500">
-          View published course grades, cumulative GPA, and section-wise attendance logs.
+          View your official published course grades and cumulative GPA.
         </p>
       </div>
 
@@ -65,15 +39,15 @@ export default function TranscriptAndAttendancePage() {
               : undefined
           }
           icon={Award}
-          isLoading={loadingTranscript}
+          isLoading={isLoading}
         />
         <StatCard
           title="Total Credits Earned"
           value={transcript?.totalCreditsCompleted ?? 0}
           subtitle="From published course results"
-          icon={CalendarCheck}
+          icon={BookOpen}
           iconClassName="bg-emerald-50 text-emerald-600"
-          isLoading={loadingTranscript}
+          isLoading={isLoading}
         />
       </div>
 
@@ -83,7 +57,7 @@ export default function TranscriptAndAttendancePage() {
           <CardDescription>Official transcript courses grouped by semester</CardDescription>
         </CardHeader>
         <CardContent>
-          {loadingTranscript ? (
+          {isLoading ? (
             <Skeleton className="h-40 w-full" />
           ) : !transcript || (transcript.semesters?.length ?? 0) === 0 ? (
             <EmptyState
@@ -99,7 +73,8 @@ export default function TranscriptAndAttendancePage() {
                     <span className="font-semibold text-slate-900">{sem.semesterName}</span>
                     <div className="flex gap-4 text-xs text-slate-600">
                       <span>
-                        Semester GPA: <strong className="text-indigo-600">{sem.semesterGpa.toFixed(2)}</strong>
+                        Semester GPA:{" "}
+                        <strong className="text-indigo-600">{sem.semesterGpa.toFixed(2)}</strong>
                       </span>
                       <span>
                         Credits: <strong>{sem.creditsEarned}</strong>
@@ -134,70 +109,6 @@ export default function TranscriptAndAttendancePage() {
                   </div>
                 </div>
               ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <CardTitle>Section Attendance</CardTitle>
-            <CardDescription>Select an enrolled section to inspect attendance.</CardDescription>
-          </div>
-          {enrollments.length > 0 && (
-            <select
-              value={activeSectionId}
-              onChange={(e) => setSelectedSectionId(e.target.value)}
-              aria-label="Select section for attendance"
-              className="h-9 rounded-lg border border-slate-200 bg-white px-3 text-sm dark:border-slate-700 dark:bg-slate-950"
-            >
-              {enrollments.map((e) => (
-                <option key={e.sectionId} value={e.sectionId}>
-                  {e.section.course.code} (Sec {e.section.sectionCode})
-                </option>
-              ))}
-            </select>
-          )}
-        </CardHeader>
-        <CardContent>
-          {!activeSectionId ? (
-            <EmptyState
-              title="No enrolled sections"
-              description="Enroll in a section to track your attendance."
-            />
-          ) : loadingAttendance ? (
-            <Skeleton className="h-36 w-full" />
-          ) : !attendance || attendance.records.length === 0 ? (
-            <EmptyState
-              title="No attendance records yet"
-              description="Your instructor has not marked attendance for this section yet."
-            />
-          ) : (
-            <div className="space-y-4">
-              <div className="flex flex-wrap gap-4 rounded-lg bg-slate-50 p-4 text-sm dark:bg-slate-950">
-                <span>
-                  Total Classes: <strong>{attendance.totalClasses}</strong>
-                </span>
-                <span>
-                  Attended: <strong>{attendance.attendedClasses}</strong>
-                </span>
-                <span>
-                  Percentage:{" "}
-                  <strong className="text-indigo-600">{attendance.attendancePercentage}%</strong>
-                </span>
-              </div>
-              <div className="divide-y divide-slate-100 dark:divide-slate-800">
-                {attendance.records.map((rec) => (
-                  <div key={rec.id} className="flex items-center justify-between py-2.5 text-sm">
-                    <span>{formatDate(rec.date)}</span>
-                    <div className="flex items-center gap-3">
-                      {rec.remarks && <span className="text-xs text-slate-400">{rec.remarks}</span>}
-                      <StatusBadge status={rec.status} />
-                    </div>
-                  </div>
-                ))}
-              </div>
             </div>
           )}
         </CardContent>
