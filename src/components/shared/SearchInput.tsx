@@ -20,11 +20,13 @@ export function SearchInput({
   className,
 }: SearchInputProps) {
   const [local, setLocal] = useState(value);
+  const [prevValue, setPrevValue] = useState(value);
   const debounced = useDebounce(local, 350);
 
-  useEffect(() => {
+  if (value !== prevValue) {
+    setPrevValue(value);
     setLocal(value);
-  }, [value]);
+  }
 
   useEffect(() => {
     if (debounced !== value) {
