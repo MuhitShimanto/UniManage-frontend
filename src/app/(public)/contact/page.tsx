@@ -45,7 +45,7 @@ export default function ContactPage() {
         </p>
       </div>
 
-      <div className="grid gap-8 md:grid-cols-3">
+      <div className="grid items-start gap-8 md:grid-cols-3">
         <div className="space-y-4">
           <Card interactive>
             <CardContent className="flex items-start gap-3 p-5">

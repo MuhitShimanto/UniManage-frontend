@@ -221,8 +221,8 @@ export default function AdminCoursesPage() {
       </div>
 
       {tab === "courses" && (
-        <div className="grid gap-6 lg:grid-cols-3">
-          <Card className="lg:col-span-1">
+        <div className="grid items-start gap-6 lg:grid-cols-3">
+          <Card className="lg:sticky lg:top-24 lg:col-span-1">
             <CardHeader>
               <CardTitle>Create Course Wizard</CardTitle>
               <CardDescription>Step {wizardStep} of 3</CardDescription>
@@ -393,8 +393,8 @@ export default function AdminCoursesPage() {
       )}
 
       {tab === "sections" && (
-        <div className="grid gap-6 md:grid-cols-2">
-          <Card>
+        <div className="grid items-start gap-6 md:grid-cols-2">
+          <Card className="md:sticky md:top-24">
             <CardHeader>
               <CardTitle>Open New Section</CardTitle>
             </CardHeader>

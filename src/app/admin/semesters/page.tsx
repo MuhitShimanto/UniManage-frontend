@@ -51,8 +51,8 @@ export default function AdminSemestersPage() {
         </p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card>
+      <div className="grid items-start gap-6 md:grid-cols-2">
+        <Card className="md:sticky md:top-24">
           <CardHeader>
             <CardTitle>Add Semester</CardTitle>
           </CardHeader>

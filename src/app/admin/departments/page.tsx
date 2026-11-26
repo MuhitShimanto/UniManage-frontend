@@ -72,8 +72,8 @@ export default function AdminDepartmentsAndProgramsPage() {
       {/* Departments */}
       <section className="space-y-4">
         <h2 className="text-lg font-bold text-slate-900">Departments</h2>
-        <div className="grid gap-6 md:grid-cols-2">
-          <Card>
+        <div className="grid items-start gap-6 md:grid-cols-2">
+          <Card className="md:sticky md:top-24">
             <CardHeader>
               <CardTitle>Add Department</CardTitle>
             </CardHeader>
@@ -116,8 +116,8 @@ export default function AdminDepartmentsAndProgramsPage() {
       {/* Programs */}
       <section className="space-y-4 border-t border-slate-200/80 pt-6">
         <h2 className="text-lg font-bold text-slate-900">Degree Programs</h2>
-        <div className="grid gap-6 md:grid-cols-2">
-          <Card>
+        <div className="grid items-start gap-6 md:grid-cols-2">
+          <Card className="md:sticky md:top-24">
             <CardHeader>
               <CardTitle>Add Degree Program</CardTitle>
             </CardHeader>

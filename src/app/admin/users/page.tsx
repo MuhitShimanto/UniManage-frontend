@@ -151,8 +151,8 @@ function AdminUsersClient() {
         </p>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        <Card className="lg:col-span-1">
+      <div className="grid items-start gap-6 lg:grid-cols-3">
+        <Card className="lg:sticky lg:top-24 lg:col-span-1">
           <CardHeader>
             <CardTitle>Create Instructor</CardTitle>
             <CardDescription>Provision a faculty account with employee ID.</CardDescription>
